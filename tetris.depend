@@ -1,0 +1,73 @@
+# depslib dependency file v1.0
+1327888545 source:e:\sheur\c++\tetris\main.cpp
+	"global.h"
+	"gl_wrapper.h"
+	"key.h"
+	"database.h"
+	<iostream>
+	<math.h>
+
+1327874106 e:\sheur\c++\tetris\include\global.h
+	"GL/freeglut.h"
+	"object.h"
+
+1066736514 e:\sheur\c++\tetris\\gl\freeglut.h
+	"freeglut_std.h"
+	"freeglut_ext.h"
+
+1307677630 e:\sheur\c++\tetris\\gl\freeglut_std.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdlib.h>
+
+1282011864 e:\sheur\c++\tetris\\gl\gl.h
+
+1282011864 e:\sheur\c++\tetris\\gl\glu.h
+	<stddef.h>
+	<GL/gl.h>
+
+1315165112 e:\sheur\c++\tetris\\gl\freeglut_ext.h
+	<stdarg.h>
+
+1327610915 e:\sheur\c++\tetris\include\gl_wrapper.h
+	"global.h"
+
+1326829109 e:\sheur\c++\tetris\include\key.h
+	"global.h"
+	"gl_wrapper.h"
+
+1326922777 e:\sheur\c++\tetris\include\database.h
+	"global.h"
+
+1327866509 e:\sheur\c++\tetris\include\controller.h
+	"global.h"
+
+1327872481 source:e:\sheur\c++\tetris\gl_wrapper.cpp
+	"gl_wrapper.h"
+	"controller.h"
+	<math.h>
+	<stdio.h>
+
+1327874002 source:e:\sheur\c++\tetris\global.cpp
+	"global.h"
+
+1327809231 source:e:\sheur\c++\tetris\key.cpp
+	<iostream>
+	"key.h"
+
+1326829855 source:e:\sheur\c++\tetris\controller.cpp
+	"controller.h"
+
+1327889555 source:e:\sheur\c++\tetris\database.cpp
+	"database.h"
+	<stdio.h>
+	<iostream>
+	<fstream>
+
+1327885210 e:\sheur\c++\tetris\include\object.h
+	"GL/freeglut.h"
+
+1327889297 source:e:\sheur\c++\tetris\object.cpp
+	"object.h"
+

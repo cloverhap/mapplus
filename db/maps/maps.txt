@@ -1,0 +1,5 @@
+// This is the maps database
+// dimensions is comma-separated with width,length,height
+
+id name dimensions location
+1 Main 100,20,100 1

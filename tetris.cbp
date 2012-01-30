@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="tetris" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\tetris" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="tetris" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-O2" />
+			<Add option="-Wall" />
+			<Add directory="E:\Sheur\C++\tetris\" />
+			<Add directory="E:\Sheur\C++\tetris\include" />
+		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc" />
+			<Add option="-static-libstdc++" />
+			<Add library="lib\libfreeglut_static.a" />
+			<Add library="lib\libgdi32.a" />
+			<Add library="lib\libglu32.a" />
+			<Add library="lib\libopengl32.a" />
+			<Add library="lib\libwinmm.a" />
+		</Linker>
+		<Unit filename="controller.cpp" />
+		<Unit filename="database.cpp" />
+		<Unit filename="gl_wrapper.cpp" />
+		<Unit filename="global.cpp" />
+		<Unit filename="include\controller.h" />
+		<Unit filename="include\database.h" />
+		<Unit filename="include\gl_wrapper.h" />
+		<Unit filename="include\global.h" />
+		<Unit filename="include\key.h" />
+		<Unit filename="include\object.h" />
+		<Unit filename="key.cpp" />
+		<Unit filename="main.cpp" />
+		<Unit filename="object.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

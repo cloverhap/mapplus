@@ -1,0 +1,5 @@
+// This is the chars database
+// saved_location is a comma-separated coordinate corresponding with the map's x,y,z (width,length,height)
+
+id name tag saved_position saved_map_id
+1 Player Player 5,1,95 1
