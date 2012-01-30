@@ -13,6 +13,10 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="-DDEBUG" />
+					<Add option="-DDEBUG_VALUE" />
+					<Add option="-DDEBUG_POS" />
+					<Add option="-DDEBUG_KEY" />
 				</Compiler>
 			</Target>
 			<Target title="Release">

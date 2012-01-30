@@ -1,9 +1,4 @@
-A conversion from C to C++ of the "map" project. Has a couple more things: 
-
-2012/01/29
-- implemented classes instead of structs for game data
-- each class has an update function called on idle loops (TODO: check if idle loop function is executed on movement frames)
-- program ends when user walks up to the big red rectangle
+A continuation and conversion from C to C++ of the "map" project.
 
 Keys:
 W,A,S,D - move forward, left, back, right
@@ -13,3 +8,16 @@ shift+W,shift+S - rotate up, down
 +,- - speed up or slow down movement and rotation speed
 F12 - Changes between QWERTY and DVORAK
 
+
+2012/01/30
+- added HUD drawing
+- added dialogue box (no text display yet)
+- diff game modes available to restrict certain user inputs to game modes
+2012/01/29
+- implemented classes instead of structs for game data
+- each class has an update function called on idle loops
+- program ends when user walks up to the big red rectangle
+
+TODO: 
+- dialogue text display
+- check if idle loop function is executed on movement frames

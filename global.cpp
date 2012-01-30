@@ -9,7 +9,14 @@ GLdouble angular_speed;   // rotating speed
 unit * units[MAX_CHARS];  // list of characters (logic will need to be changed eventually to allow dynamic char creation)
 area * areas[MAX_AREAS];  // same as above
 item * items[MAX_OBJECTS]; // ditto
+string diag_message;    // Message to send to dialogue box
+GLint game_mode;   // Current stage of the program
+GLboolean goal_reached;
+
 GLint kb_layout;  // Keyboard layout
+GLint screen_size_x;
+GLint screen_size_y;
+
 
 GLint GLmax(GLint a, GLint b)
 {

@@ -2,4 +2,4 @@
 
 id name dimensions position map_id
 1 bulletin 20,10,5 10,1,80 1
-2 turret 1,5,1 5,1,60 1
+2 turret 1,3,1 5,1,60 1

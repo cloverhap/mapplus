@@ -152,6 +152,25 @@ void translate_eye(GLdouble x, GLdouble y, GLdouble z) {
         up_pos[0] = y_axis[0];
         up_pos[1] = y_axis[1];
         up_pos[2] = y_axis[2];
+
+        // Check if unit is out of bounds of map
+       // printf("Debug: %d\n",areas[units[0]->map_id]->id);
+        GLdouble dist_to_end[3] = {eye_pos[0] - areas[units[0]->map_id - 1]->dimension[0],
+                                   eye_pos[1] - areas[units[0]->map_id - 1]->dimension[1],
+                                   eye_pos[2] - areas[units[0]->map_id - 1]->dimension[2]};
+        for (int i = 0; i < 3; i++) {
+            if (eye_pos[i] < 0) {
+                center_pos[i] += -eye_pos[i];
+                //up_pos[i] += -eye_pos[i];
+                eye_pos[i] = 0;  // += -eye_pos[i];
+                units[0]->position[i] = eye_pos[i];
+            } else if (dist_to_end[i] > 0) {
+                center_pos[i] -= dist_to_end[i];
+                //up_pos[i] -= dist_to_end[i];
+                eye_pos[i] -= dist_to_end[i];
+                units[0]->position[i] = eye_pos[i];
+            }
+        }
     }
 
 #ifdef DEBUG_VALUE

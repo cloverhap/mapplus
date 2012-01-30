@@ -2,7 +2,6 @@
 #define _KEY__H_
 
 #include "global.h"
-#include "gl_wrapper.h"
 
 // global variables
 

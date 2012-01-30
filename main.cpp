@@ -38,6 +38,39 @@ static void draw_items() {
     }
 }
 
+static void draw_diag() {
+    game_mode = DIAG_MODE;
+    // Make a rectangular dialogue area
+    glBegin(GL_LINE_LOOP);
+        glColor3f(0.7, 0.7, 0.7);
+        glVertex2f(2.0, screen_size_y - screen_size_y/4.0 - 2.0);
+        glVertex2f(screen_size_x - 2.0, screen_size_y - screen_size_y/4.0 - 2.0);
+        glVertex2f(screen_size_x - 2.0, screen_size_y - 2.0);
+        glVertex2f(2.0, screen_size_y - 2.0);
+    glEnd();
+}
+
+static void draw_HUD() {
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0.0, screen_size_x, screen_size_y, 0.0, -1.0, 10.0);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+
+    glLoadIdentity();
+    glDisable(GL_CULL_FACE);
+    glClear(GL_DEPTH_BUFFER_BIT);  // Clears depth buffer
+
+    if (diag_message != "") draw_diag();
+    else game_mode = GAME_MODE;
+
+    // Making sure we can render 3D again
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+}
+
 static void render_scene()
 {
     glMatrixMode(GL_MODELVIEW);
@@ -47,6 +80,9 @@ static void render_scene()
     // draw things
     draw_units();
     draw_items();
+
+    // draw 2D HUD
+    draw_HUD();
 
     glFlush();  // draw graphics in buffer immediately
     glutSwapBuffers();  // switch buffers for double buffering
@@ -59,6 +95,8 @@ static void resize_scene(int w, int h)
 {
     if (h == 0)
         h = 1;  // DON'T divide by zero - please?
+    screen_size_x = w;
+    screen_size_y = h;
     GLfloat ratio = 1.0 * w / h;
     glViewport(0,0,w,h);  // set the viewport to be the entire window
 
@@ -101,12 +139,14 @@ static void update_master() {
 }
 
 static void check_goal() {
-    if (sqrt(pow(units[0]->position[0] - items[0]->position[0],2) +
-             pow(units[0]->position[1] - items[0]->position[1],2) +
-             pow(units[0]->position[2] - items[0]->position[2],2)
-             )
-        < 5) {
-        exit_glut("You have reached the goal!");
+    if (goal_reached == false &&
+        (sqrt(pow(units[0]->position[0] - items[0]->position[0],2) +
+              pow(units[0]->position[1] - items[0]->position[1],2) +
+              pow(units[0]->position[2] - items[0]->position[2],2)
+              )
+         < 5)) {
+        diag_message = "You have reached the goal!\nPress Space or Enter to continue or \npress Esc to exit.";
+        goal_reached = true;
     }
 }
 
@@ -164,8 +204,11 @@ void init()
 
     speed = 0.5;
     angular_speed = (1.0/12.0)*PI;
+    diag_message = "";
+    goal_reached = false;
 
     kb_layout = KB_QWERTY;
+    game_mode = GAME_MODE;
 }
 
 /***
@@ -186,6 +229,10 @@ void exit_glut(const char* exit_message) {
     }
 
     cout << exit_message << endl;
+#ifndef DEBUG
+    // TODO: release build crashes after exit_glut() without an exit() statement
+    exit(1);
+#endif
     glutLeaveMainLoop();
 }
 
@@ -195,6 +242,8 @@ int main(int argc, char *argv[])
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     GLint init_win_size_x = 640, init_win_size_y = 480;
+    screen_size_x = init_win_size_x;
+    screen_size_y = init_win_size_y;
     glutInitWindowSize(init_win_size_x, init_win_size_y);
     GLint init_win_pos_x = (glutGet(GLUT_SCREEN_WIDTH) - init_win_size_x) / 2;
     GLint init_win_pos_y = (glutGet(GLUT_SCREEN_HEIGHT) - init_win_size_y) / 2;
@@ -223,9 +272,9 @@ int main(int argc, char *argv[])
     glutDestroyWindow(window_id);
 
     //system("PAUSE");
-    // TODO: doesn't reach here... why?
-    int tmp;
-    cout << "Press any key to continuel!." << endl;
+    // TODO: doesn't reach the manually made "Press any key to continue!" ...why?
+    char tmp;
+    cout << "Press any key to continue!." << endl;
     cin >> tmp;
     return 0;
 }
