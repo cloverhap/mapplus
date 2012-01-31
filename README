@@ -7,8 +7,10 @@ Q,E - rotate left, right
 shift+W,shift+S - rotate up, down
 +,- - speed up or slow down movement and rotation speed
 F12 - Changes between QWERTY and DVORAK
+Esc - Quit game
 
-
+2012/01/30(update)
+- Displays message text
 2012/01/30
 - added HUD drawing
 - added dialogue box (no text display yet)
@@ -19,5 +21,6 @@ F12 - Changes between QWERTY and DVORAK
 - program ends when user walks up to the big red rectangle
 
 TODO: 
-- dialogue text display
+- change dialogue text colour
+- add events/event queue for messages so reading a message (space or enter) can trigger events
 - check if idle loop function is executed on movement frames

@@ -7,7 +7,7 @@
 	<iostream>
 	<math.h>
 
-1327964276 e:\sheur\c++\tetris\include\global.h
+1327968474 e:\sheur\c++\tetris\include\global.h
 	"GL/freeglut.h"
 	"object.h"
 	<string>
@@ -49,7 +49,7 @@
 	<math.h>
 	<stdio.h>
 
-1327963623 source:e:\sheur\c++\tetris\global.cpp
+1327968474 source:e:\sheur\c++\tetris\global.cpp
 	"global.h"
 
 1327963411 source:e:\sheur\c++\tetris\key.cpp

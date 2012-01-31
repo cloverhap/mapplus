@@ -48,6 +48,16 @@ static void draw_diag() {
         glVertex2f(screen_size_x - 2.0, screen_size_y - 2.0);
         glVertex2f(2.0, screen_size_y - 2.0);
     glEnd();
+
+    // Draw text at screen coordinates (100, 120), where (0, 0) is the top-left of the
+    // screen in an 18-point Helvetica font
+    glRasterPos2f(7.0, screen_size_y - screen_size_y/4.0 + 12.0 - 2.0);
+    glColor4f(0.0, 0.0, 1.0, 1.0);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const unsigned char*)diag_message.c_str());
+    //glPushMatrix();
+    //glTranslatef(7.0, screen_size_y - screen_size_y/4.0 + 12.0 - 2.0, 0);
+    //glutStrokeString(GLUT_STROKE_ROMAN, (const unsigned char*)diag_message.c_str());
+    //glPopMatrix();
 }
 
 static void draw_HUD() {
@@ -145,7 +155,7 @@ static void check_goal() {
               pow(units[0]->position[2] - items[0]->position[2],2)
               )
          < 5)) {
-        diag_message = "You have reached the goal!\nPress Space or Enter to continue or \npress Esc to exit.";
+        diag_message = "You have reached the goal!\nPress [Space] or [Enter] to continue or [Esc] to exit.";
         goal_reached = true;
     }
 }
