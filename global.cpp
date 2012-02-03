@@ -27,3 +27,18 @@ GLint GLmax(GLint a, GLint b)
 #endif
     return a > b ? a : b;
 }
+
+void load_mode(GLint mode) {
+    game_mode = mode;
+    switch (mode) {
+    case GAME_MODE:
+        glClearColor(1.0,1.0,1.0,0.0);
+        break;
+    case TITLE_MODE:
+        glClearColor(0.0,0.0,0.0,0.0);
+        break;
+    default:
+        break;
+    }
+    return;
+}

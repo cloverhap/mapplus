@@ -42,7 +42,7 @@ static void draw_diag() {
     game_mode = DIAG_MODE;
     // Make a rectangular dialogue area
     glBegin(GL_LINE_LOOP);
-        glColor3f(0.7, 0.7, 0.7);
+        glColor3f(0.0, 0.0, 0.0);
         glVertex2f(2.0, screen_size_y - screen_size_y/4.0 - 2.0);
         glVertex2f(screen_size_x - 2.0, screen_size_y - screen_size_y/4.0 - 2.0);
         glVertex2f(screen_size_x - 2.0, screen_size_y - 2.0);
@@ -60,6 +60,53 @@ static void draw_diag() {
     //glPopMatrix();
 }
 
+static void draw_title() {
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0.0, screen_size_x, screen_size_y, 0.0, -1.0, 10.0);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+
+    glLoadIdentity();
+    glDisable(GL_CULL_FACE);
+    glClear(GL_DEPTH_BUFFER_BIT);  // Clears depth buffer
+
+    // Draw text at screen coordinates (100, 120), where (0, 0) is the top-left of the
+    // screen in an 18-point Helvetica font
+    // TODO: load text here and center it
+    glColor4f(1.0, 1.0, 0.0, 1.0);
+    GLfloat text_pos[2] = {screen_size_x/3.0 - 80, screen_size_y - 2*(screen_size_y/3.0)};
+    glRasterPos2f(text_pos[0],text_pos[1]);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Let's start with a bam!");
+    text_pos[1] += 16;
+    glRasterPos2f(text_pos[0],text_pos[1]);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Goal: Walk toward the red rectangle and touch it.");
+    text_pos[1] += 16;
+    glRasterPos2f(text_pos[0],text_pos[1]);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Keys: ");
+    text_pos[1] += 16;
+    glRasterPos2f(text_pos[0],text_pos[1]);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"WASD/Arrow keys: move left/right/forward/backward");
+    text_pos[1] += 16;
+    glRasterPos2f(text_pos[0],text_pos[1]);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Q/E: strafe left/right");
+    text_pos[1] += 16;
+    glRasterPos2f(text_pos[0],text_pos[1]);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Esc: Quit game");
+    text_pos[1] += 16;
+    glRasterPos2f(text_pos[0],text_pos[1]);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"");
+    text_pos[1] += 16;
+    glRasterPos2f(text_pos[0],text_pos[1]);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Enter to continue.");
+
+    // Making sure we can render 3D again
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+}
+
 static void draw_HUD() {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -72,8 +119,10 @@ static void draw_HUD() {
     glDisable(GL_CULL_FACE);
     glClear(GL_DEPTH_BUFFER_BIT);  // Clears depth buffer
 
-    if (diag_message != "") draw_diag();
-    else game_mode = GAME_MODE;
+    if (diag_message != "")
+        draw_diag();
+    else if (game_mode == DIAG_MODE && diag_message == "")
+        game_mode = GAME_MODE;
 
     // Making sure we can render 3D again
     glPopMatrix();
@@ -87,12 +136,16 @@ static void render_scene()
     // clear all pixels to clear colour
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // draw things
-    draw_units();
-    draw_items();
+    if (game_mode == GAME_MODE || game_mode == DIAG_MODE) {
+        // draw things
+        draw_units();
+        draw_items();
 
-    // draw 2D HUD
-    draw_HUD();
+        // draw 2D HUD
+        draw_HUD();
+    } else if (game_mode == TITLE_MODE) {
+        draw_title();
+    }
 
     glFlush();  // draw graphics in buffer immediately
     glutSwapBuffers();  // switch buffers for double buffering
@@ -149,13 +202,15 @@ static void update_master() {
 }
 
 static void check_goal() {
-    if (goal_reached == false &&
+    if (game_mode == GAME_MODE && goal_reached == false &&
         (sqrt(pow(units[0]->position[0] - items[0]->position[0],2) +
               pow(units[0]->position[1] - items[0]->position[1],2) +
               pow(units[0]->position[2] - items[0]->position[2],2)
               )
          < 5)) {
-        diag_message = "You have reached the goal!\nPress [Space] or [Enter] to continue or [Esc] to exit.";
+        diag_message = "You have reached the goal!";
+        diag_message += "\nPress [Space] or [Enter] to continue.";
+        diag_message += "\nYou can always press [Esc] to exit.";
         goal_reached = true;
     }
 }
@@ -218,7 +273,7 @@ void init()
     goal_reached = false;
 
     kb_layout = KB_QWERTY;
-    game_mode = GAME_MODE;
+    load_mode(TITLE_MODE);
 }
 
 /***
@@ -240,7 +295,7 @@ void exit_glut(const char* exit_message) {
 
     cout << exit_message << endl;
 #ifndef DEBUG
-    // TODO: release build crashes after exit_glut() without an exit() statement
+    // BUG: release build crashes after exit_glut() without an exit() statement
     exit(1);
 #endif
     glutLeaveMainLoop();
@@ -257,11 +312,6 @@ int main(int argc, char *argv[])
     glutInitWindowSize(init_win_size_x, init_win_size_y);
     GLint init_win_pos_x = (glutGet(GLUT_SCREEN_WIDTH) - init_win_size_x) / 2;
     GLint init_win_pos_y = (glutGet(GLUT_SCREEN_HEIGHT) - init_win_size_y) / 2;
-    /*
-    cout << "Screen Size: %i %i\n", glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT);
-    cout << "Window Size: %i %i\n", init_win_size_x, init_win_size_y;
-    cout << "Window Coords: %i %i\n", init_win_pos_x, init_win_pos_y;
-    */
     cout << "Screen Size: " << glutGet(GLUT_SCREEN_WIDTH) << " " << glutGet(GLUT_SCREEN_HEIGHT) << endl;
     cout << "Window Size: " << init_win_size_x << " " << init_win_size_y << endl;
     cout << "Window Coords: " << init_win_pos_x << " " << init_win_pos_y << endl;

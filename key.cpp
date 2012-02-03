@@ -111,10 +111,11 @@ void process_key(unsigned char key, int x, int y)
             break;
         default: break;
         }
-    } else if (kb_layout == KB_QWERTY && game_mode == DIAG_MODE) {
+    } else if (game_mode == DIAG_MODE) {
         switch (key) {
         case 27:   // esc
             exit_glut("The end.");
+            break;
         case '\r': // enter
         case '\n': // enter
         case 32:   // space
@@ -122,14 +123,14 @@ void process_key(unsigned char key, int x, int y)
             break;
         default: break;
         }
-    } else if (kb_layout == KB_DVORAK && game_mode == DIAG_MODE) {
+    } else if (game_mode == TITLE_MODE) {
         switch (key) {
         case 27:   // esc
-            exit_glut("The end.");
+            exit_glut("Leaving game.");
+            break;
         case '\r': // enter
         case '\n': // enter
-        case 32:   // space
-            diag_message = "";
+            load_mode(GAME_MODE);
             break;
         default: break;
         }
@@ -147,7 +148,7 @@ void process_special_key(int key, int x, int y)
     cout << "Pressed a special key" << endl;
 #endif
     if (game_mode == GAME_MODE) {
-    switch (key) {
+        switch (key) {
         case GLUT_KEY_RIGHT:
             // move right
             translate_eye(speed,0.0,0.0);
@@ -173,7 +174,7 @@ void process_special_key(int key, int x, int y)
             else kb_layout = KB_QWERTY;
             break;
         default: break;
-    }
+        }
     }
 
     glutPostRedisplay();

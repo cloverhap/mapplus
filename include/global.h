@@ -57,9 +57,12 @@ extern GLdouble center_pos[3];
 extern GLdouble up_pos[3];
 extern GLdouble speed;            // moving speed
 extern GLdouble angular_speed;    // rotating speed
+
+// TODO: research data-driven/component-system design
 extern unit * units[MAX_CHARS];   // list of characters (logic will need to be changed eventually to allow dynamic char creation)
 extern area * areas[MAX_AREAS];   // same as above
 extern item * items[MAX_OBJECTS]; // ditto
+
 extern GLint game_mode;
 extern string diag_message;       // Message to send to dialogue box
 extern GLboolean goal_reached;
@@ -68,8 +71,10 @@ extern GLint kb_layout;  // Keyboard layout (QWERTY or dvorak)
 extern GLint screen_size_x;
 extern GLint screen_size_y;
 
+
 // global functions
 GLint GLmax(GLint, GLint);
+void load_mode(GLint);
 
 // global functions (from main.cpp)
 void exit_glut(const char *exit_message);

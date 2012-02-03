@@ -5,10 +5,12 @@ W,A,S,D - move forward, left, back, right
 arrow keys - same as above
 Q,E - rotate left, right
 shift+W,shift+S - rotate up, down
-+,- - speed up or slow down movement and rotation speed
++,- - speed up or slow down movement and rotation
 F12 - Changes between QWERTY and DVORAK
 Esc - Quit game
 
+2012/02/02
+- Hardcoded a title screen, with key explanation
 2012/01/30(update)
 - Displays message text
 2012/01/30

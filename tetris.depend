@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1327963682 source:e:\sheur\c++\tetris\main.cpp
+1328230908 source:e:\sheur\c++\tetris\main.cpp
 	"global.h"
 	"gl_wrapper.h"
 	"key.h"
@@ -7,7 +7,7 @@
 	<iostream>
 	<math.h>
 
-1327968474 e:\sheur\c++\tetris\include\global.h
+1328229678 e:\sheur\c++\tetris\include\global.h
 	"GL/freeglut.h"
 	"object.h"
 	<string>
@@ -49,10 +49,10 @@
 	<math.h>
 	<stdio.h>
 
-1327968474 source:e:\sheur\c++\tetris\global.cpp
+1328229846 source:e:\sheur\c++\tetris\global.cpp
 	"global.h"
 
-1327963411 source:e:\sheur\c++\tetris\key.cpp
+1328230966 source:e:\sheur\c++\tetris\key.cpp
 	"key.h"
 	"gl_wrapper.h"
 	<iostream>
