@@ -3,6 +3,12 @@
 
 #include "GL/freeglut.h"
 
+typedef struct {
+    GLubyte* image;
+    GLint width;
+    GLint height;
+} BMP;
+
 class object {
 public:
     GLbyte name[256];

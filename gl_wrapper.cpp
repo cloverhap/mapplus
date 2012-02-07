@@ -387,4 +387,3 @@ void draw_cube(GLenum mode, GLdouble size) {
 
     glPopAttrib();
 }
-

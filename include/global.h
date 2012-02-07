@@ -23,7 +23,7 @@
 #define MAX_DB_LINE_LENGTH 1024
 #define MAX_CHARS 100
 #define MAX_AREAS 50
-#define MAX_OBJECTS 100
+#define MAX_ITEMS 100
 
 // enum for direction
 #define LEFT 1
@@ -55,16 +55,17 @@ using namespace::std;
 extern GLdouble eye_pos[3];
 extern GLdouble center_pos[3];
 extern GLdouble up_pos[3];
-extern GLdouble speed;            // moving speed
-extern GLdouble angular_speed;    // rotating speed
+extern GLdouble speed;          // moving speed
+extern GLdouble angular_speed;  // rotating speed
 
 // TODO: research data-driven/component-system design
-extern unit * units[MAX_CHARS];   // list of characters (logic will need to be changed eventually to allow dynamic char creation)
-extern area * areas[MAX_AREAS];   // same as above
-extern item * items[MAX_OBJECTS]; // ditto
+extern unit* units[MAX_CHARS];  // list of characters (logic will need to be changed eventually to allow dynamic char creation)
+extern area* areas[MAX_AREAS];  // same as above
+extern item* items[MAX_ITEMS];  // ditto
+extern BMP title_bg;            // title background
 
 extern GLint game_mode;
-extern string diag_message;       // Message to send to dialogue box
+extern string diag_message;     // Message to send to dialogue box
 extern GLboolean goal_reached;
 
 extern GLint kb_layout;  // Keyboard layout (QWERTY or dvorak)
@@ -75,6 +76,7 @@ extern GLint screen_size_y;
 // global functions
 GLint GLmax(GLint, GLint);
 void load_mode(GLint);
+GLint load_bitmap(GLbyte* path, BMP* b);
 
 // global functions (from main.cpp)
 void exit_glut(const char *exit_message);

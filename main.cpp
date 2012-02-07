@@ -3,7 +3,6 @@
 #include "key.h"
 #include "database.h"
 #include <iostream>
-//#include <stdlib.h>
 #include <math.h>
 
 /***
@@ -51,8 +50,8 @@ static void draw_diag() {
 
     // Draw text at screen coordinates (100, 120), where (0, 0) is the top-left of the
     // screen in an 18-point Helvetica font
-    glRasterPos2f(7.0, screen_size_y - screen_size_y/4.0 + 12.0 - 2.0);
-    glColor4f(0.0, 0.0, 1.0, 1.0);
+    glColor4f(0.5, 0.0, 0.8, 1.0);
+    glRasterPos2f(7.0, screen_size_y - screen_size_y/4.0 + 12.0 - 2.0);  // RasterPos saves text colour
     glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const unsigned char*)diag_message.c_str());
     //glPushMatrix();
     //glTranslatef(7.0, screen_size_y - screen_size_y/4.0 + 12.0 - 2.0, 0);
@@ -66,43 +65,56 @@ static void draw_title() {
     glLoadIdentity();
     glOrtho(0.0, screen_size_x, screen_size_y, 0.0, -1.0, 10.0);
     glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
 
+    // Draw background for title page
+    glPushMatrix();
     glLoadIdentity();
     glDisable(GL_CULL_FACE);
     glClear(GL_DEPTH_BUFFER_BIT);  // Clears depth buffer
+    if (title_bg.image) {
+        glRasterPos2f(0,screen_size_y - 1);
+        glDrawPixels(title_bg.width,title_bg.height,GL_RGB,GL_UNSIGNED_BYTE,title_bg.image);
+    }
+    glPopMatrix();
 
-    // Draw text at screen coordinates (100, 120), where (0, 0) is the top-left of the
-    // screen in an 18-point Helvetica font
-    // TODO: load text here and center it
-    glColor4f(1.0, 1.0, 0.0, 1.0);
-    GLfloat text_pos[2] = {screen_size_x/3.0 - 80, screen_size_y - 2*(screen_size_y/3.0)};
-    glRasterPos2f(text_pos[0],text_pos[1]);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Let's start with a bam!");
-    text_pos[1] += 16;
-    glRasterPos2f(text_pos[0],text_pos[1]);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Goal: Walk toward the red rectangle and touch it.");
-    text_pos[1] += 16;
-    glRasterPos2f(text_pos[0],text_pos[1]);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Keys: ");
-    text_pos[1] += 16;
-    glRasterPos2f(text_pos[0],text_pos[1]);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"WASD/Arrow keys: move left/right/forward/backward");
-    text_pos[1] += 16;
-    glRasterPos2f(text_pos[0],text_pos[1]);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Q/E: strafe left/right");
-    text_pos[1] += 16;
-    glRasterPos2f(text_pos[0],text_pos[1]);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Esc: Quit game");
-    text_pos[1] += 16;
-    glRasterPos2f(text_pos[0],text_pos[1]);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"");
-    text_pos[1] += 16;
-    glRasterPos2f(text_pos[0],text_pos[1]);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const GLubyte*)"Enter to continue.");
+    // Draw text on screen at (text_pos[0], text_pos[1]) where top-left is (0,0)
+    // in an 18-point Helvetica font
+    // TODO: dynamically load text here and center it
+    glPushMatrix();
+    glLoadIdentity();
+    glDisable(GL_CULL_FACE);
+    glClear(GL_DEPTH_BUFFER_BIT);  // Clears depth buffer
+    GLfloat text_pos[2] = {screen_size_x/6.0, screen_size_y/2.0};
+    GLint cur_line = 0;
+    GLfloat line_size = 24;
+    glColor3f(0.8, 0.9, 0.0);
+    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Let's start with a simple goal!");
+    cur_line++;
+    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Goal: Walk toward the red rectangle and touch it.");
+    cur_line++;
+    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Keys: ");
+    cur_line++;
+    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"WASD/Arrow keys: move left/right/forward/backward");
+    cur_line++;
+    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Q/E: strafe left/right");
+    cur_line++;
+    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Esc: Quit game");
+    cur_line++;
+    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"");
+    cur_line++;
+    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Enter to continue.");
+    cur_line++;
+    glPopMatrix();
 
     // Making sure we can render 3D again
-    glPopMatrix();
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
 }
@@ -180,6 +192,29 @@ static void resize_scene(int w, int h)
     gluLookAt(eye_pos[0],eye_pos[1],eye_pos[2],
               center_pos[0],center_pos[1],center_pos[2],
               up_pos[0],up_pos[1],up_pos[2]);
+
+    if (game_mode == TITLE_MODE) {
+        // Change size of the title background
+        // TODO: How to make resizing the title background not lose so much fidelity and be fast...?
+        BMP tmp;
+        tmp.width = w;
+        tmp.height = h;
+        if ((tmp.image = (GLubyte*)malloc(w*h*3*sizeof(GLubyte))) == 0) {
+#ifdef DEBUG
+            cout << "Error allocating memory." << endl;
+#endif
+        } else if (gluScaleImage(GL_RGB,title_bg.width,title_bg.height,GL_UNSIGNED_BYTE,title_bg.image,
+                                 w,h,GL_UNSIGNED_BYTE,tmp.image)) {
+#ifdef DEBUG
+            cout << "Error scaling title background image." << endl;
+#endif
+        } else {
+            delete title_bg.image;
+            title_bg.image = tmp.image;
+            title_bg.width = w;
+            title_bg.height = h;
+        }
+    }
 
     glutPostRedisplay();
 }
@@ -269,6 +304,9 @@ void init()
 
     speed = 0.5;
     angular_speed = (1.0/12.0)*PI;
+    title_bg.image = 0;
+    title_bg.width = screen_size_x;
+    title_bg.height = screen_size_y;
     diag_message = "";
     goal_reached = false;
 
@@ -292,6 +330,8 @@ void exit_glut(const char* exit_message) {
     for (i = 0; items[i] != NULL; i++) {
         delete items[i];
     }
+
+    delete title_bg.image;
 
     cout << exit_message << endl;
 #ifndef DEBUG
