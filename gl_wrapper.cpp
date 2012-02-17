@@ -3,17 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 
-/* global variables */
-extern GLdouble eye_pos[3];
-extern GLdouble center_pos[3];
-extern GLdouble up_pos[3];
-
-/**
- * Note: OpenGL uses Right-handed coordinate system, with
- * x going right, y going up, and z going towards the screen (backwards)
- * Right-handed means use the right hand to visualize cross-products
- * http://en.wikipedia.org/wiki/File:Right_hand_rule_cross_product.svg
- **/
+static GLubyte _random_pattern[32*32];  //
 
 /* Utility Functions */
 /***
@@ -273,27 +263,8 @@ void rotate_eye(GLdouble h, GLdouble v) {
 
 /***
  * Generate a random 32*32 stipple pattern
- * TODO: make it random
  ****/
-static GLubyte * getRandomStipple() {
-    /*static GLubyte randomly[] = {
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55
-    };*/
+GLubyte * getRandomStipple(GLubyte* pattern) {
     /* stipple pattern explained:
         the pattern starts from the first byte at the lower left,
         then goes right, then keeps going right, then goes up.
@@ -305,42 +276,66 @@ static GLubyte * getRandomStipple() {
         (stipple pattern first appears in ch.2)
         Careful: bit ordering can be changed by calling glPixelStore*()
     */
-    static GLubyte randomly[] = {
-      0xB0, 0x00, 0x00, 0x03, // row 1 (from the bottom)
-      0x60, 0x00, 0x00, 0x06,
-      0x30, 0x00, 0x00, 0x0B,
-      0x18, 0x00, 0x00, 0x18,
-      0x0B, 0x00, 0x00, 0x30, // row 5
-      0x06, 0x00, 0x00, 0x60,
-      0x03, 0x00, 0x00, 0xB0,
-      0x01, 0x80, 0x01, 0x80,
-      0x00, 0xB0, 0x03, 0x00,
-      0x00, 0x60, 0x06, 0x00, // row 10
-      0x00, 0x30, 0x0B, 0x00,
-      0x00, 0x18, 0x18, 0x00,
-      0x00, 0x0B, 0x30, 0x00,
-      0x00, 0x06, 0x60, 0x00,
-      0x00, 0x03, 0xB0, 0x00,
-      0x00, 0x01, 0x80, 0x00, // row 16
-      0x00, 0x01, 0x80, 0x00,
-      0x00, 0x03, 0xB0, 0x00,
-      0x00, 0x06, 0x60, 0x00,
-      0x00, 0x0B, 0x30, 0x00, // row 20
-      0x00, 0x18, 0x18, 0x00,
-      0x00, 0x30, 0x0B, 0x00,
-      0x00, 0x60, 0x06, 0x00,
-      0x00, 0xB0, 0x03, 0x00, // row 24
-      0x01, 0x80, 0x01, 0x80,
-      0x03, 0x00, 0x00, 0xB0,
-      0x06, 0x00, 0x00, 0x60,
-      0x0B, 0x00, 0x00, 0x30, // row 28
-      0x18, 0x00, 0x00, 0x18,
-      0x30, 0x00, 0x00, 0x0B,
-      0x60, 0x00, 0x00, 0x06,
-      0xB0, 0x00, 0x00, 0x03  // top row (row 32)
-    };
+    /*pattern = {
+      0xB0, 0x00, 0x00, 0x03, 0x60, 0x00, 0x00, 0x06, // row 1,2 (from the bottom)
+      0x30, 0x00, 0x00, 0x0B, 0x18, 0x00, 0x00, 0x18,
+      0x0B, 0x00, 0x00, 0x30, 0x06, 0x00, 0x00, 0x60,
+      0x03, 0x00, 0x00, 0xB0, 0x01, 0x80, 0x01, 0x80,
+      0x00, 0xB0, 0x03, 0x00, 0x00, 0x60, 0x06, 0x00,
+      0x00, 0x30, 0x0B, 0x00, 0x00, 0x18, 0x18, 0x00, // row 11,12
+      0x00, 0x0B, 0x30, 0x00, 0x00, 0x06, 0x60, 0x00,
+      0x00, 0x03, 0xB0, 0x00, 0x00, 0x01, 0x80, 0x00,
+      0x00, 0x01, 0x80, 0x00, 0x00, 0x03, 0xB0, 0x00,
+      0x00, 0x06, 0x60, 0x00, 0x00, 0x0B, 0x30, 0x00,
+      0x00, 0x18, 0x18, 0x00, 0x00, 0x30, 0x0B, 0x00, // row 21,22
+      0x00, 0x60, 0x06, 0x00, 0x00, 0xB0, 0x03, 0x00,
+      0x01, 0x80, 0x01, 0x80, 0x03, 0x00, 0x00, 0xB0,
+      0x06, 0x00, 0x00, 0x60, 0x0B, 0x00, 0x00, 0x30,
+      0x18, 0x00, 0x00, 0x18, 0x30, 0x00, 0x00, 0x0B,
+      0x60, 0x00, 0x00, 0x06, 0xB0, 0x00, 0x00, 0x03  // row 31,32(top row)
+    };*/
 
-    return randomly;
+    for (unsigned int i = 0; i < 32*32; i++)
+        pattern[i] = rand() % 256;
+
+    return pattern;
+}
+
+/***
+ * These two 2D functions are from
+ * "Rendering efficient 2D sprites in OpenGL using Texture Rectangles" by Brandon Fleming
+ * http://www.gamedev.net/page/resources/_/technical/opengl/rendering-efficient-2d-sprites-in-opengl-using-r2429
+ ****/
+void glEnable2D()
+{
+    int vPort[4];
+    glGetIntegerv(GL_VIEWPORT, vPort);  // Get a copy of the viewport
+
+    // Save a copy of the projection matrix so that we can restore it
+    // when it's time to do 3D rendering again.
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0, vPort[2], vPort[3], 0, -1, 1);  // Set up the orthographic projection
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    // Make sure depth testing and lighting are disabled for 2D rendering until
+    // we are finished rendering in 2D
+    glPushAttrib(GL_DEPTH_BUFFER_BIT|GL_LIGHTING_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+}
+
+void glDisable2D()
+{
+    glPopAttrib();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
 }
 
 /***
@@ -354,34 +349,87 @@ void draw_cube(GLenum mode, GLdouble size) {
 
     if (mode != 0) glPolygonMode(GL_FRONT_AND_BACK, mode);
     if (mode == GL_FILL) {
-        glEnable(GL_POLYGON_STIPPLE);
-        glPolygonStipple(getRandomStipple());
+        //glEnable(GL_POLYGON_STIPPLE);
+        //if (!_random_pattern)
+        //    glPolygonStipple(_random_pattern);
+        glBindTexture(GL_TEXTURE_2D,textures[0]);
     }
     glBegin(GL_QUADS);
-        glVertex3f(-size,-size,size);  // Side 1 (front)
-        glVertex3f(size,-size,size);
-        glVertex3f(size,size,size);
-        glVertex3f(-size,size,size);
-        glVertex3f(-size,-size,size);  // Side 2
-        glVertex3f(-size,size,size);
-        glVertex3f(-size,size,-size);
-        glVertex3f(-size,-size,-size);
-        glVertex3f(-size,size,size);   // Side 3
-        glVertex3f(size,size,size);
-        glVertex3f(size,size,-size);
-        glVertex3f(-size,size,-size);
-        glVertex3f(size,size,size);    // Side 4
-        glVertex3f(size,-size,size);
-        glVertex3f(size,-size,-size);
-        glVertex3f(size,size,-size);
-        glVertex3f(size,-size,size);   // Side 5
-        glVertex3f(-size,-size,size);
-        glVertex3f(-size,-size,-size);
-        glVertex3f(size,-size,-size);
-        glVertex3f(-size,-size,-size); // Side 6 (back)
-        glVertex3f(-size,size,-size);
-        glVertex3f(size,size,-size);
-        glVertex3f(size,-size,-size);
+        if (mode == GL_FILL) {
+            glTexCoord2f(0.0,0.0);
+            glVertex3f(-size,-size,size);  // Side 1 (front)
+            glTexCoord2f(1.0,0.0);
+            glVertex3f(size,-size,size);
+            glTexCoord2f(1.0,1.0);
+            glVertex3f(size,size,size);
+            glTexCoord2f(0.0,1.0);
+            glVertex3f(-size,size,size);
+            glTexCoord2f(0.0,0.0);
+            glVertex3f(-size,-size,-size);  // Side 2 (left)
+            glTexCoord2f(1.0,0.0);
+            glVertex3f(-size,-size,size);
+            glTexCoord2f(1.0,1.0);
+            glVertex3f(-size,size,size);
+            glTexCoord2f(0.0,1.0);
+            glVertex3f(-size,size,-size);
+            glTexCoord2f(0.0,0.0);
+            glVertex3f(-size,size,size);   // Side 3 (top)
+            glTexCoord2f(1.0,0.0);
+            glVertex3f(size,size,size);
+            glTexCoord2f(1.0,1.0);
+            glVertex3f(size,size,-size);
+            glTexCoord2f(0.0,1.0);
+            glVertex3f(-size,size,-size);
+            glTexCoord2f(0.0,0.0);
+            glVertex3f(size,-size,size);   // Side 4 (right)
+            glTexCoord2f(1.0,0.0);
+            glVertex3f(size,-size,-size);
+            glTexCoord2f(1.0,1.0);
+            glVertex3f(size,size,-size);
+            glTexCoord2f(0.0,1.0);
+            glVertex3f(size,size,size);
+            glTexCoord2f(0.0,0.0);
+            glVertex3f(-size,-size,size);   // Side 5 (bottom)
+            glTexCoord2f(1.0,0.0);
+            glVertex3f(size,-size,size);
+            glTexCoord2f(1.0,1.0);
+            glVertex3f(size,-size,-size);
+            glTexCoord2f(0.0,1.0);
+            glVertex3f(-size,-size,-size);
+            glTexCoord2f(0.0,0.0);
+            glVertex3f(size,-size,-size); // Side 6 (back)
+            glTexCoord2f(1.0,0.0);
+            glVertex3f(-size,-size,-size);
+            glTexCoord2f(1.0,1.0);
+            glVertex3f(-size,size,-size);
+            glTexCoord2f(0.0,1.0);
+            glVertex3f(size,size,-size);
+        } else {
+            glVertex3f(-size,-size,size);  // Side 1 (front)
+            glVertex3f(size,-size,size);
+            glVertex3f(size,size,size);
+            glVertex3f(-size,size,size);
+            glVertex3f(-size,-size,size);  // Side 2
+            glVertex3f(-size,size,size);
+            glVertex3f(-size,size,-size);
+            glVertex3f(-size,-size,-size);
+            glVertex3f(-size,size,size);   // Side 3
+            glVertex3f(size,size,size);
+            glVertex3f(size,size,-size);
+            glVertex3f(-size,size,-size);
+            glVertex3f(size,size,size);    // Side 4
+            glVertex3f(size,-size,size);
+            glVertex3f(size,-size,-size);
+            glVertex3f(size,size,-size);
+            glVertex3f(size,-size,size);   // Side 5
+            glVertex3f(-size,-size,size);
+            glVertex3f(-size,-size,-size);
+            glVertex3f(size,-size,-size);
+            glVertex3f(-size,-size,-size); // Side 6 (back)
+            glVertex3f(-size,size,-size);
+            glVertex3f(size,size,-size);
+            glVertex3f(size,-size,-size);
+        }
     glEnd();
     glDisable(GL_POLYGON_STIPPLE);
 

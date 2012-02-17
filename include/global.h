@@ -24,6 +24,7 @@
 #define MAX_CHARS 100
 #define MAX_AREAS 50
 #define MAX_ITEMS 100
+#define MAX_TEXTURES 1
 
 // enum for direction
 #define LEFT 1
@@ -51,6 +52,14 @@
 
 using namespace::std;
 
+/**
+ * Note: OpenGL uses Right-handed coordinate system, with
+ * x going right, y going up, and z going towards the screen (backwards)
+ * Right-handed means use the right hand to visualize cross-products
+ * http://en.wikipedia.org/wiki/File:Right_hand_rule_cross_product.svg
+ **/
+
+
 // global variables
 extern GLdouble eye_pos[3];
 extern GLdouble center_pos[3];
@@ -63,6 +72,8 @@ extern unit* units[MAX_CHARS];  // list of characters (logic will need to be cha
 extern area* areas[MAX_AREAS];  // same as above
 extern item* items[MAX_ITEMS];  // ditto
 extern BMP title_bg;            // title background
+extern BMP title_bg_original;   // title background in original size
+extern GLuint textures[MAX_TEXTURES];       // custom texture IDs
 
 extern GLint game_mode;
 extern string diag_message;     // Message to send to dialogue box
@@ -77,6 +88,7 @@ extern GLint screen_size_y;
 GLint GLmax(GLint, GLint);
 void load_mode(GLint);
 GLint load_bitmap(GLbyte* path, BMP* b);
+GLint load_texture(GLbyte* path, GLint id);
 
 // global functions (from main.cpp)
 void exit_glut(const char *exit_message);

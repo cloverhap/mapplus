@@ -30,9 +30,13 @@ static void draw_items() {
         glTranslatef(p1->position[0],p1->position[1],p1->position[2]);
         glRotatef(0,0.0,0.0,1.0);
         glScalef(p1->dimension[0],p1->dimension[1],p1->dimension[2]);
-        glColor3f(0.0,0.0,1.0);
-        if (i == 0) glColor3f(1.0,0.0,0.0);
-        draw_cube(GL_LINE,0.5);
+        if (i == 0) {
+            glColor3f(1.0,0.0,0.0);
+            draw_cube(GL_FILL,0.5);
+        } else {
+            glColor3f(0.0,0.0,1.0);
+            draw_cube(GL_LINE,0.5);
+        }
         glPopMatrix();
     }
 }
@@ -48,8 +52,9 @@ static void draw_diag() {
         glVertex2f(2.0, screen_size_y - 2.0);
     glEnd();
 
-    // Draw text at screen coordinates (100, 120), where (0, 0) is the top-left of the
-    // screen in an 18-point Helvetica font
+    // Draw text at screen coordinates (100, 120),
+    // where (0, 0) is the top-left of the screen,
+    // in 12-point Helvetica font
     glColor4f(0.5, 0.0, 0.8, 1.0);
     glRasterPos2f(7.0, screen_size_y - screen_size_y/4.0 + 12.0 - 2.0);  // RasterPos saves text colour
     glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const unsigned char*)diag_message.c_str());
@@ -60,86 +65,39 @@ static void draw_diag() {
 }
 
 static void draw_title() {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0, screen_size_x, screen_size_y, 0.0, -1.0, 10.0);
-    glMatrixMode(GL_MODELVIEW);
+    glEnable2D();
 
     // Draw background for title page
-    glPushMatrix();
-    glLoadIdentity();
-    glDisable(GL_CULL_FACE);
-    glClear(GL_DEPTH_BUFFER_BIT);  // Clears depth buffer
     if (title_bg.image) {
         glRasterPos2f(0,screen_size_y - 1);
         glDrawPixels(title_bg.width,title_bg.height,GL_RGB,GL_UNSIGNED_BYTE,title_bg.image);
     }
-    glPopMatrix();
 
     // Draw text on screen at (text_pos[0], text_pos[1]) where top-left is (0,0)
     // in an 18-point Helvetica font
     // TODO: dynamically load text here and center it
-    glPushMatrix();
-    glLoadIdentity();
-    glDisable(GL_CULL_FACE);
-    glClear(GL_DEPTH_BUFFER_BIT);  // Clears depth buffer
-    GLfloat text_pos[2] = {screen_size_x/6.0, screen_size_y/2.0};
-    GLint cur_line = 0;
-    GLfloat line_size = 24;
     glColor3f(0.8, 0.9, 0.0);
-    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Let's start with a simple goal!");
-    cur_line++;
-    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Goal: Walk toward the red rectangle and touch it.");
-    cur_line++;
-    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Keys: ");
-    cur_line++;
-    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"WASD/Arrow keys: move left/right/forward/backward");
-    cur_line++;
-    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Q/E: strafe left/right");
-    cur_line++;
-    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Esc: Quit game");
-    cur_line++;
-    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"");
-    cur_line++;
-    glRasterPos2f(text_pos[0],text_pos[1] + cur_line*line_size);
-    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Enter to continue.");
-    cur_line++;
-    glPopMatrix();
+    glRasterPos2f(screen_size_x/6.0, screen_size_y/2.0);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Let's start with a simple goal!\n");
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Goal: Walk toward the red rectangle and touch it.\n");
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Keys: \n");
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"WASD/Arrow keys: move left/right/forward/backward\n");
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Q/E: rotate left/right\n\n");
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Enter to continue.\n");
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const GLubyte*)"Esc to Quit game.\n");
 
-    // Making sure we can render 3D again
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
+    glDisable2D();
 }
 
 static void draw_HUD() {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0, screen_size_x, screen_size_y, 0.0, -1.0, 10.0);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-
-    glLoadIdentity();
-    glDisable(GL_CULL_FACE);
-    glClear(GL_DEPTH_BUFFER_BIT);  // Clears depth buffer
+    glEnable2D();
 
     if (diag_message != "")
         draw_diag();
     else if (game_mode == DIAG_MODE && diag_message == "")
         game_mode = GAME_MODE;
 
-    // Making sure we can render 3D again
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
+    glDisable2D();
 }
 
 static void render_scene()
@@ -180,8 +138,9 @@ static void resize_scene(int w, int h)
     glLoadIdentity();
 
     // set the correct perspective
-    gluPerspective(45,ratio,1,1000);
-    //glFrustum(-ratio,ratio,-1.0,1.0,2.0,100.0);
+    //gluPerspective(45,ratio,1,1000);
+    GLdouble top = tan(0.5*PI/4.0)*1.0;  // top = tan(fov*0.5)*near
+    glFrustum(ratio*(-top),ratio*top,-top,top,1.0,1000.0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -195,24 +154,13 @@ static void resize_scene(int w, int h)
 
     if (game_mode == TITLE_MODE) {
         // Change size of the title background
-        // TODO: How to make resizing the title background not lose so much fidelity and be fast...?
-        BMP tmp;
-        tmp.width = w;
-        tmp.height = h;
-        if ((tmp.image = (GLubyte*)malloc(w*h*3*sizeof(GLubyte))) == 0) {
-#ifdef DEBUG
-            cout << "Error allocating memory." << endl;
-#endif
-        } else if (gluScaleImage(GL_RGB,title_bg.width,title_bg.height,GL_UNSIGNED_BYTE,title_bg.image,
-                                 w,h,GL_UNSIGNED_BYTE,tmp.image)) {
+        title_bg.width = min(w,title_bg_original.width);
+        title_bg.height = min(h,title_bg_original.height);
+        if (gluScaleImage(GL_RGB,title_bg_original.width,title_bg_original.height,GL_UNSIGNED_BYTE,title_bg_original.image,
+                                 title_bg.width,title_bg.height,GL_UNSIGNED_BYTE,title_bg.image)) {
 #ifdef DEBUG
             cout << "Error scaling title background image." << endl;
 #endif
-        } else {
-            delete title_bg.image;
-            title_bg.image = tmp.image;
-            title_bg.width = w;
-            title_bg.height = h;
         }
     }
 
@@ -223,16 +171,12 @@ static void resize_scene(int w, int h)
  * Idle Function callback
  ****/
 static void update_master() {
-    int i;
-    for (i = 0; units[i]; i++) {
+    for (int i = 0; units[i]; i++)
         units[i]->update();
-    }
-    for (i = 0; areas[i]; i++) {
+    for (int i = 0; areas[i]; i++)
         areas[i]->update();
-    }
-    for (i = 0; items[i]; i++) {
+    for (int i = 0; items[i]; i++)
         items[i]->update();
-    }
     return;
 }
 
@@ -260,6 +204,12 @@ static void idle_event()
 /***
  * Initialization
  ****/
+void init_texture() {
+    glGenTextures(MAX_TEXTURES,textures);
+    if (load_texture((GLbyte*)"system\\goal.bmp",textures[0]) != 0) {
+        cout << "Failed to load texture" << endl;
+    }
+}
 void init()
 {
     // Read Database on initialization
@@ -270,6 +220,7 @@ void init()
     //glShadeModel(GL_FLAT);
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
     /*
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -302,15 +253,17 @@ void init()
               up_pos[0],up_pos[1],up_pos[2]);
     glPopAttrib();
 
+    // Initialize global variables
     speed = 0.5;
     angular_speed = (1.0/12.0)*PI;
     title_bg.image = 0;
-    title_bg.width = screen_size_x;
-    title_bg.height = screen_size_y;
     diag_message = "";
     goal_reached = false;
-
     kb_layout = KB_QWERTY;
+
+    // load custom textures
+    init_texture();
+
     load_mode(TITLE_MODE);
 }
 
@@ -321,17 +274,20 @@ void init()
  ****/
 void exit_glut(const char* exit_message) {
     int i;
-    for (i = 0; units[i] != NULL; i++) {
-        delete units[i];
+    for (i = 0; units[i]; i++) {
+        free(units[i]);
+        units[i] = 0;
     }
-    for (i = 0; areas[i] != NULL; i++) {
-        delete areas[i];
+    for (i = 0; areas[i]; i++) {
+        free(areas[i]);
+        areas[i] = 0;
     }
-    for (i = 0; items[i] != NULL; i++) {
-        delete items[i];
+    for (i = 0; items[i]; i++) {
+        free(items[i]);
+        items[i] = 0;
     }
 
-    delete title_bg.image;
+    free(title_bg.image);
 
     cout << exit_message << endl;
 #ifndef DEBUG

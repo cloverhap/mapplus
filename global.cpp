@@ -2,6 +2,7 @@
 #include "gl_wrapper.h"
 #include <iostream>
 #include <stdio.h>
+#include <math.h>
 
 // global variables
 GLdouble eye_pos[3];
@@ -13,6 +14,8 @@ unit* units[MAX_CHARS];  // list of characters (logic will need to be changed ev
 area* areas[MAX_AREAS];  // same as above
 item* items[MAX_ITEMS];  // ditto
 BMP title_bg;            // title background
+BMP title_bg_original;   // title background in original size
+GLuint textures[1];       // custom texture IDs
 string diag_message;     // Message to send to dialogue box
 GLint game_mode;         // Current stage of the program
 GLboolean goal_reached;
@@ -41,21 +44,22 @@ void load_mode(GLint mode) {
     case TITLE_MODE:
         glClearColor(0.0,0.0,0.0,0.0);
         if (!title_bg.image) {
-            BMP bgIn;
-            load_bitmap((GLbyte*)"system\\Flickr-_The Digital Story_-3740187815_3fd65b938d_o.bmp", &bgIn);
-            if (bgIn.image) {
-                if ((title_bg.image = (GLubyte*)malloc(screen_size_x*screen_size_y*3*sizeof(GLubyte))) == 0) {
+            load_bitmap((GLbyte*)"system\\Flickr-_The Digital Story_-3740187815_3fd65b938d_o.bmp", &title_bg_original);
+            if (title_bg_original.image) {
+                GLint w = min(screen_size_x,title_bg_original.width);
+                GLint h = min(screen_size_y,title_bg_original.height);
+                if ((title_bg.image = (GLubyte*)malloc(w*h*3*sizeof(GLubyte))) == 0) {
 #ifdef DEBUG
                     cout << "Error allocating memory." << endl;
 #endif
-                } else if (gluScaleImage(GL_RGB,bgIn.width,bgIn.height,GL_UNSIGNED_BYTE,bgIn.image,
-                                         screen_size_x,screen_size_y,GL_UNSIGNED_BYTE,title_bg.image)) {
+                } else if (gluScaleImage(GL_RGB,title_bg_original.width,title_bg_original.height,GL_UNSIGNED_BYTE,title_bg_original.image,
+                                         w,h,GL_UNSIGNED_BYTE,title_bg.image)) {
 #ifdef DEBUG
                     cout << "Error scaling title background image." << endl;
 #endif
                 } else {
-                    title_bg.width = screen_size_x;
-                    title_bg.height = screen_size_y;
+                    title_bg.width = w;
+                    title_bg.height = h;
                 }
             }
 #ifdef DEBUG
@@ -156,6 +160,7 @@ GLint load_bitmap(GLbyte* path, BMP* b) {
     // read bitmap
     b->width = info.biWidth;
     b->height = info.biHeight;
+
     fseek(in,header.bfOffBits,SEEK_SET);
     fread((char*)b->image,info.biSizeImage,1,in);
     //for(int i = (b->height-1)*b->width; i >= 0; i -= b->width)
@@ -177,4 +182,43 @@ GLint load_bitmap(GLbyte* path, BMP* b) {
 
 	fclose(in);
 	return 0;
+}
+
+/***
+ * Load image and save as texture
+ * @post returns 0 on success, 1 on failure
+ ****/
+GLint load_texture(GLbyte* path, GLint id) {
+    BMP loaded;
+    BMP scaled;
+
+    if (load_bitmap(path, &loaded)) {
+        cout << "Failed to load texture from " << path << endl;
+        return 1;
+    }
+
+    scaled.width = pow(2,(int)log2(loaded.width)) + 2;
+    scaled.height = pow(2,(int)log2(loaded.height)) + 2;
+    if (!(scaled.image = (GLubyte*)malloc(scaled.width*scaled.height*3*sizeof(GLubyte)))) {
+        cout << "Error allocating memory in load_texture." << endl;
+        free(loaded.image);
+        return 1;
+    }
+    if (gluScaleImage(GL_RGB,loaded.width,loaded.height,GL_UNSIGNED_BYTE,loaded.image,
+                      scaled.width,scaled.height,GL_UNSIGNED_BYTE,scaled.image)) {
+        cout << "Error scaling texture." << endl;
+        return 1;
+    }
+
+    // http://www.gamedev.net/page/resources/_/technical/opengl/opengl-texture-mapping-an-introduction-r947
+    glBindTexture(GL_TEXTURE_2D, id);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, scaled.width, scaled.height, 0, GL_RGB, GL_UNSIGNED_BYTE, scaled.image);
+
+    return 0;
 }

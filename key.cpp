@@ -15,7 +15,7 @@ void process_key(unsigned char key, int x, int y)
     if (kb_layout == KB_QWERTY && game_mode == GAME_MODE) {
         switch (key) {
         case 27: // esc
-            exit_glut("User quit the game.");
+            load_mode(TITLE_MODE);
             break;
         case 'd':
             // move right
@@ -65,7 +65,7 @@ void process_key(unsigned char key, int x, int y)
         switch (key) {
         case 'q':
         case 27: // esc
-            exit_glut("User quit the game.");
+            load_mode(TITLE_MODE);
             break;
         case 'e':
             // move right
@@ -114,7 +114,7 @@ void process_key(unsigned char key, int x, int y)
     } else if (game_mode == DIAG_MODE) {
         switch (key) {
         case 27:   // esc
-            exit_glut("The end.");
+            load_mode(TITLE_MODE);
             break;
         case '\r': // enter
         case '\n': // enter

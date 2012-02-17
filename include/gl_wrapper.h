@@ -38,5 +38,8 @@ void draw_cube(GLenum, GLdouble);
 
 /// utility functions
 void get_rel_axis(GLdouble[], GLdouble[], GLdouble[]);
+GLubyte* getRandomStipple(GLubyte* pattern);
+void glEnable2D();
+void glDisable2D();
 
 #endif

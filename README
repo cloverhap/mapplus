@@ -11,6 +11,10 @@ DEBUG KEYS:
 +,- - speed up or slow down movement and rotation
 F12 - Changes between QWERTY and DVORAK
 
+2012/02/10
+- made some code simplifications in rendering
+- part completion of texture loading
+- easier 2D rendering
 2012/02/06
 - Can load a 24-bit Windows .bmp images as title background
 2012/02/02
